@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    require 'get.php';
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -26,11 +30,15 @@
             color: white;
         }
     </style>
-    <?php
-        require 'get.php';
 
-        $rakhiv = 695859;
-        $data = new GetWeatherData($rakhiv, 'ru');
+    <?php
+        if ($_POST) {
+            $_SESSION['city_id'] = $_POST['city_id'];
+        } else {
+            $_SESSION['city_id'] = 695859;
+
+        }
+        $data = new GetWeatherData($_SESSION['city_id'], 'ru');
         $info = $data->getData();
     ?>
     <script>
@@ -60,24 +68,45 @@
 <body>
 
 <div class="container">
-    <h1 class="text-center" style="font-size: 70px">Погода в городе <?php echo $info->name ?></h1>
+    <h1 class="text-center" style="font-size: 40px">Погода в городе
+        <form class="d-inline-block" name="form" action="" method="post">
+            <select class="form-select form-select-lg m-2" name="city_id" onchange="form.submit()">
+                <?php
+                    foreach ($data->cities as $key => $value)
+                    {
+                ?>
+                <option value="<?php echo $key . '"';
+                    if ($key == $_SESSION['city_id']) {
+                        echo 'selected';
+                    }
+                ?>><?php echo $value ?>
+                    </option>
+                    <?php
+                    }
+                ?>
+            </select>
+        </form>
+    </h1>
 
-    <div class="text-center">
-        <h6 style="font-size: 30px">
+    <div class=" text-center
+                ">
+                <h6 style="font-size: 30px">
 
-            <p class="mb-0">Страна: <?php echo $info->sys->country ?></p>
-            <p class="mb-0">Рассвет в <?php echo date('G:i', $info->sys->sunrise + $info->timezone) ?>, а закат
-                в <?php echo date('G:i', $info->sys->sunset + $info->timezone) ?> (местное время)</p>
-            <p class="mb-0">Сейчас в городе <?php echo $info->name . ' ' . $info->weather[0]->description ?>
-                <img src="http://openweathermap.org/img/wn/<?php echo $info->weather[0]->icon ?>@2x.png" alt="Weather"
-                     height="70px">
-            </p>
-            <p class="mb-0">Температура: <?php echo $info->main->temp ?> ℃ ,ощущается
-                как: <?php echo $info->main->feels_like ?> ℃</p>
-            <p class="mb-0"><b>Min: </b><?php echo $info->main->temp_min ?>℃ ,
-                <b>Max: </b><?php echo $info->main->temp_max ?> ℃</p>
-        </h6>
-    </div>
+                    <p class="mb-0">Страна: <?php echo $info->sys->country ?></p>
+                    <p class="mb-0">Рассвет в <?php echo date('G:i', $info->sys->sunrise + $info->timezone) ?>, а закат
+                        в <?php echo date('G:i', $info->sys->sunset + $info->timezone) ?>
+                    <p>(по местному времени)</p>
+                    <p class="mb-0">Сейчас в городе <?php echo $info->name . ' ' . $info->weather[0]->description ?>
+                        <img src="http://openweathermap.org/img/wn/<?php echo $info->weather[0]->icon ?>@2x.png"
+                             alt="Weather"
+                             height="70px">
+                    </p>
+                    <p class="mb-0">Температура: <?php echo $info->main->temp ?> ℃ ,ощущается
+                        как: <?php echo $info->main->feels_like ?> ℃</p>
+                    <p class="mb-0"><b>Min: </b><?php echo $info->main->temp_min ?>℃ ,
+                        <b>Max: </b><?php echo $info->main->temp_max ?> ℃</p>
+                </h6>
+</div>
 
 
 </div>

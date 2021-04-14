@@ -10,6 +10,15 @@
         private $params = null;
         private $url = null;
 
+        public $cities = [
+            695859 => 'Рахов',
+            707471 => 'Ивано-Франковск',
+            702550 => 'Львов',
+            2643743 => 'Лондон',
+            524901 => 'Москва',
+        ];
+
+
         public function __construct($city_id, $lang)
         {
             $this->params = http_build_query(array(
@@ -34,4 +43,5 @@
             curl_close($ch);
             return json_decode($data);
         }
+
     }
